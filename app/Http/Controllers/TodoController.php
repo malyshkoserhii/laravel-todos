@@ -13,11 +13,12 @@ class TodoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $todos = $this->todoService->getAllTodos();
-            return response()->json(['data' => $todos]);
+            $completed = $request->query('completed');
+            $todos = $this->todoService->getAllTodos($completed);
+            return response()->json($todos);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

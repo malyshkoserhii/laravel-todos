@@ -8,9 +8,13 @@ class TodoRepository
 {
     public function __construct() {}
 
-    public function getAllTodos()
+    public function getAllTodos(string | null $completed)
     {
-        return Todo::orderBy('created_at', 'desc')->limit(10)->get();
+        if ($completed) {
+            return Todo::orderBy('created_at', 'desc')->where('completed', $completed)->paginate(10);
+        }
+
+        return Todo::orderBy('created_at', 'desc')->paginate(10);
     }
 
     public function getTodoById(int $id): Todo|null

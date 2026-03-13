@@ -2,16 +2,20 @@
 
 namespace App\Services;
 
+use App\Http\Resources\TodoCollection;
+use App\Http\Resources\TodoResource;
 use App\Repositories\TodoRepository;
+use Illuminate\Support\Facades\Auth;
 
 class TodoService
 {
     public function __construct(private TodoRepository $todoRepository) {}
 
-    public function getAllTodos()
+    public function getAllTodos($completed)
     {
 
-        return $this->todoRepository->getAllTodos();
+        $todos = $this->todoRepository->getAllTodos($completed);
+        return new TodoCollection($todos);
     }
 
     public function getTodoById(int $id)
@@ -22,12 +26,18 @@ class TodoService
             throw new \Exception('Todo with ID ' . $id . ' not found');
         }
 
-        return $this->todoRepository->getTodoById($id);
+        return new TodoResource($todo);
     }
 
     public function createTodo(array $data)
     {
-        return $this->todoRepository->createTodo($data);
+        $user = Auth::user();
+        $userId = $user->id;
+        $payload = [
+            'user_id' => $userId,
+            ...$data
+        ];
+        return new TodoResource($this->todoRepository->createTodo($payload));
     }
 
     public function updateTodo(int $id, array $data)
@@ -38,7 +48,7 @@ class TodoService
             throw new \Exception('Todo with ID ' . $id . ' not found');
         }
 
-        return $this->todoRepository->updateTodo($id, $data);
+        return new TodoResource($this->todoRepository->updateTodo($id, $data));
     }
 
     public function deleteTodo(int $id)
