@@ -19,10 +19,10 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -51,5 +51,10 @@ class User extends Authenticatable
     public function todos(): HasMany
     {
         return $this->hasMany(Todo::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'user_id');
     }
 }
