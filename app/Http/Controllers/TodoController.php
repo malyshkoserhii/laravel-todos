@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTodoRequest;
 use App\Http\Requests\UpdateTodoRequest;
+use App\Models\Todo;
 use Illuminate\Http\Request;
 use App\Services\TodoService;
 
@@ -55,6 +56,9 @@ class TodoController extends Controller
      */
     public function update(UpdateTodoRequest $request, string $id)
     {
+        $todo = Todo::findOrFail($id);
+        $this->authorize('update', $todo);
+
         try {
             $data = $this->todoService->updateTodo($id, $request->validated());
             return response()->json(['data' => $data]);
@@ -68,6 +72,9 @@ class TodoController extends Controller
      */
     public function destroy(string $id)
     {
+        $todo = Todo::findOrFail($id);
+        $this->authorize('delete', $todo);
+
         try {
             $this->todoService->deleteTodo($id);
             return response()->json(['message' => 'Todo deleted successfully']);

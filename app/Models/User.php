@@ -15,6 +15,18 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasApiTokens;
 
     /**
+     * Check if the user has one of the given roles.
+     *
+     * @param  string|array<string>  $roles
+     */
+    public function hasRole(string|array $roles): bool
+    {
+        $roles = is_array($roles) ? $roles : [$roles];
+
+        return in_array($this->role, $roles, true);
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
