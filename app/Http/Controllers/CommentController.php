@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\GetCommentsByTodoIdRequest;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use App\Models\Comment;
 use App\Services\CommentService;
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 
 class CommentController extends Controller
 {
@@ -46,6 +45,9 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request, string $id)
     {
+        $comment = Comment::findOrFail($id);
+        $this->authorize('update', $comment);
+
         try {
             $data = $request->validated();
             $comment = $this->commentService->updateComment($id, $data);
@@ -60,6 +62,9 @@ class CommentController extends Controller
      */
     public function destroy(string $id)
     {
+        $comment = Comment::findOrFail($id);
+        $this->authorize('delete', $comment);
+
         try {
             $this->commentService->deleteComment($id);
             return response()->json(['message' => 'Comment deleted successfully']);

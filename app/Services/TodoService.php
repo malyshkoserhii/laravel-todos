@@ -44,6 +44,7 @@ class TodoService
     {
         $todo = $this->todoRepository->getTodoById($id);
 
+
         if (!$todo) {
             throw new \Exception('Todo with ID ' . $id . ' not found');
         }
